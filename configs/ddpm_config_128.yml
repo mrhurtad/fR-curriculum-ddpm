@@ -1,0 +1,77 @@
+data_params:
+  dataset_path: "data/fR_slabs_asinh_a0.8"   # output of data_prep/prepare_data.py
+  norm_stats_path: "data/fR_slabs_asinh_a0.8/norm_stats_asinh_a0.8_e1e-06_g256_th1.npz"
+  box_size: 1000.0
+  slab_size: 128
+  slab_thickness: 1
+  num_workers: 8
+  norm_method: "asinh"
+  alpha: 0.8
+  eps: 1e-6
+  use_percentile_clip: true   # clip z to the training 0.1-99.9 percentiles
+
+diffusion_params:
+  num_timesteps: 1000
+  beta_start: 0.0001
+  beta_end: 0.02
+  schedule_type: "cosine"
+  t_normalize: false
+  prediction_type: "v"
+
+model_params:
+  in_channels: 5
+  out_channels: 5
+  time_dim: 128
+  groups: 8
+  img_size: 128
+
+train_params:
+  batch_size: 4
+  accum_steps: 2
+  num_epochs: 60
+  half: 2
+  lr: 0.0001
+  use_amp: true
+  save_every_n_epochs: 5
+  realization_limit: null
+
+  pretrained_path: "runs/stage_64_<timestamp>/models/latest.pt"   # set to the previous stage checkpoint
+
+  use_wandb: false
+  wandb_project: "ddpm-cosmology"
+  wandb_name: "stage_128"
+  wandb_entity: null
+
+  fourier_loss_type: "l1"
+  lam_fourier: 0.1
+  fourier_min_w: 1e-3
+
+  pk:
+    n_bins: 64
+    bin_spacing: "log"
+    use_log_pk: true
+    k_weight_power: -0.5
+
+  amp:
+    mode: "logamp"
+    k_weight_power: 0.0
+
+  l1:
+    use_phase: false
+    log_amp: false
+    k_weight_power: -0.25
+
+  l1_phase:
+    use_phase: true
+    log_amp: false
+    k_weight_power: 0.0
+
+  t_sampler: "uniform"
+  low_end: 200
+  mid_end: 700
+  frac_low: 0.35
+  frac_mid: 0.45
+
+logging:
+  results_dir: "runs"
+  run_name: "stage_128"
